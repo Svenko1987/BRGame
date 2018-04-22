@@ -5,8 +5,10 @@ public enum Direction {
     DOWN(1, 0),
     LEFT(0, -1),
     RIGHT(0, 1);
+
     private final int deltaX;
     private final int deltaY;
+    
     Direction(int x, int y ){
         deltaX=x;
         deltaY=y;

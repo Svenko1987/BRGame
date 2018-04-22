@@ -124,8 +124,6 @@ public class Actor {
                         && tile.getValue() == 'p')
                 .findFirst()
                 .ifPresent(validEnemy -> setEnemy(validEnemy));
-
-
     }
 
     private void dontMove() {
