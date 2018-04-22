@@ -3,17 +3,28 @@ package com.company;
 
 import java.util.Random;
 
+
 public class Actor {
     private String name;
+    private int id;
     private Tile curentLocation;
-    Random r = new Random();
+    private Tile enemy;
+    private Random r = new Random();
 
     public Actor() {
     }
 
-    public Actor(String name, Tile curentLocation) {
-        this.name = name;
+    public void setEnemy(Tile enemy) {
+        this.enemy = enemy;
+    }
+
+    public Actor(int id, Tile curentLocation) {
+        this.id = id;
         this.curentLocation = curentLocation;
+    }
+
+    public void removeActor(World world, Actor actor) {
+        world.getActors().remove(actor);
     }
 
     public void setCurentLocation(Tile curentLocation) {
@@ -38,18 +49,23 @@ public class Actor {
         switch (val) {
             case 0:
                 dontMove();
+                System.out.println(id + " dint move");
                 break;
             case 1:
-                moveDown(world);
+                move(world, Direction.UP);
+                System.out.println(id + " moved UP");
                 break;
             case 2:
-                moveUp(world);
+                move(world, Direction.DOWN);
+                System.out.println(id + " moved DOWN");
                 break;
             case 3:
-                moveLeft(world);
+                move(world, Direction.LEFT);
+                System.out.println(id + " moved LEFT");
                 break;
             case 4:
-                moveRight(world);
+                move(world, Direction.RIGHT);
+                System.out.println(id + " moved RIGHT");
                 break;
             default:
                 System.out.println("peto");
@@ -60,78 +76,66 @@ public class Actor {
 
     }
 
+    private void move(World world, Direction direction) {
+
+        if (curentLocation.getxAxis() + direction.getDeltaX() >= 0 && curentLocation.getxAxis() + direction.getDeltaX() < world.getHeight()
+                && curentLocation.getyAxis() + direction.getDeltaY() >= 0 && curentLocation.getyAxis() + direction.getDeltaY() < world.getWidth()) {
+            world.getGrid().stream()
+                    .filter(tile -> tile.getxAxis() == curentLocation.getxAxis() + direction.getDeltaX()
+                            && tile.getyAxis() == curentLocation.getyAxis() + direction.getDeltaY())
+                    .findFirst()
+                    .ifPresent(validTile -> {
+                        validTile.setValue(curentLocation.getValue());
+                        {
+                            world.getGrid().stream().
+                                    filter(tile -> tile.equals(curentLocation)).
+                                    findFirst().
+                                    ifPresent(thisTile -> thisTile.setValue(' '));
+                        }
+                        curentLocation = validTile;
+                    });
+
+        } else actorMove(world);
+    }
+
+    public void pickAction(World world) {
+        if (enemyLocatio(world) != null) {
+            world.getActors().stream()
+                    .filter(actor -> actor.getCurentLocation().equals(enemy))
+                    .findFirst()
+                    .ifPresent(actor -> world.getActors().remove(actor)
+                    );
+        } else actorMove(world);
+    }
+
+    public Tile enemyLocatio(World world) {
+        scoutForPlayer(world, Direction.UP);
+        scoutForPlayer(world, Direction.DOWN);
+        scoutForPlayer(world, Direction.LEFT);
+        scoutForPlayer(world, Direction.RIGHT);
+        return enemy;
+    }
+
+    public void scoutForPlayer(World world, Direction direction) {
+
+        world.getGrid().stream()
+                .filter(tile -> tile.getxAxis() == curentLocation.getxAxis() + direction.getDeltaX()
+                        && tile.getyAxis() == curentLocation.getyAxis() + direction.getDeltaY()
+                        && tile.getValue() == 'p')
+                .findFirst()
+                .ifPresent(validEnemy -> setEnemy(validEnemy));
+
+
+    }
+
     private void dontMove() {
-
-        //System.out.println(curentLocation.getxAxis()+" "+curentLocation.getyAxis()+" did'nt move");
-
-    }
-
-    private void moveUp(World world) {
-        if (curentLocation.getxAxis() != 0) {
-            world.getGrid().stream().filter(tile ->
-                tile.getxAxis() == curentLocation.getxAxis() - 1 && tile.getyAxis() == curentLocation.getyAxis()
-            ).findFirst().get().setValue(world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().getValue());
-            world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().setValue(' ');
-            this.curentLocation=world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() - 1 && tile.getyAxis() == curentLocation.getyAxis()
-            ).findFirst().get();
-
-            //System.out.println(curentLocation.getxAxis() + " " + curentLocation.getyAxis() + " move up");
-        }
-        else actorMove(world);
-
-    }
-
-    private void moveDown(World world) {
-        if (curentLocation.getxAxis() != world.getHeight()-1) {
-            world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() + 1 && tile.getyAxis() == curentLocation.getyAxis()
-            ).findFirst().get().setValue(world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().getValue());
-            world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().setValue(' ');
-            this.curentLocation=world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() + 1 && tile.getyAxis() == curentLocation.getyAxis()
-            ).findFirst().get();
-
-            //System.out.println(curentLocation.getxAxis()+" "+curentLocation.getyAxis()+" move down");
-
-
-        }
-        else actorMove(world);
-    }
-
-    private void moveLeft(World world) {
-        if (curentLocation.getyAxis() != 0){
-            world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() && tile.getyAxis() == curentLocation.getyAxis()-1
-            ).findFirst().get().setValue(world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().getValue());
-            world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().setValue(' ');
-            this.curentLocation=world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() && tile.getyAxis() == curentLocation.getyAxis()-1
-            ).findFirst().get();
-            //System.out.println(curentLocation.getxAxis()+" "+curentLocation.getyAxis()+" move left");
-        }
-        else actorMove(world);
-    }
-
-    private void moveRight(World world) {
-        if (curentLocation.getyAxis() != world.getWidth()-1){
-            world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() && tile.getyAxis() == curentLocation.getyAxis()+1
-            ).findFirst().get().setValue(world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().getValue());
-            world.getGrid().stream().filter(tile -> tile.equals(curentLocation)).findFirst().get().setValue(' ');
-            this.curentLocation=world.getGrid().stream().filter(tile ->
-                    tile.getxAxis() == curentLocation.getxAxis() && tile.getyAxis() == curentLocation.getyAxis()+1
-            ).findFirst().get();
-            //System.out.println(curentLocation.getxAxis()+" "+curentLocation.getyAxis()+" move right");
-        }
-        else actorMove(world);
     }
 
     @Override
     public String toString() {
         return "Actor{" +
-                "name='" + name + '\'' +
-                ", curentLocation=" + curentLocation +
+                "ID='" + id + '\'' +
+
                 '}';
     }
 }

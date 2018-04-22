@@ -4,14 +4,12 @@ package com.company;
 import java.util.*;
 
 public class World {
-    private int height = 0;
-    private int width = 0;
+    private int height;
+    private int width;
     private final Set<Tile> grid = new LinkedHashSet<>();
-    Random r = new Random();
+    private final HashSet<Actor> actors = new HashSet<>();
+    private Random r = new Random();
 
-    public World() {
-
-    }
 
     public World(int height, int width) {
         this.height = height;
@@ -26,7 +24,16 @@ public class World {
         return width;
     }
 
-    public void addTile(Tile tile) {
+    public void generateGrid() {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Tile temp = new Tile(i, j, '.');
+                this.grid.add(temp);
+            }
+        }
+    }
+
+    private void addTile(Tile tile) {
         this.grid.add(tile);
     }
 
@@ -34,21 +41,47 @@ public class World {
         return grid;
     }
 
-    public void addActor( Set<Actor> actors) {
+    public Set<Actor> getActors() {
+        return actors;
+    }
+
+    public void playRound(int number) {
+        for (int i = 0; i < number; i++) {
+            actors.forEach(actor -> actor.pickAction(this));
+            //printGrid();
+            System.out.println("round : " + i + "___________________________________________________________________________________________________________________________________");
+        }
+    }
+
+    public void printGrid() {
+        getGrid().forEach(t -> {
+            System.out.print(t.getValue());
+            if (t.getyAxis() == width - 1) System.out.print("\n");
+        });
+    }
+
+    public void setActors(int number) {
+        for (int i = 0; i < number; i++) {
+            addActor(i);
+        }
+
+    }
+
+    public void addActor(int id) {
 
         int x = r.nextInt(height);
         int y = r.nextInt(width);
         System.out.println("positions " + x + " " + y);
-        Tile temp=grid.stream().filter(tile -> tile.getxAxis()==x && tile.getyAxis()==y).findFirst().get();
+
 
         grid.forEach(tile -> {
             if (tile.getxAxis() == x && tile.getyAxis() == y) {
-                if (tile.getValue() == ' ') {
-                    tile.setValue((char) (r.nextInt(25) + 'a'));
-                    actors.add(new Actor("Mico",tile));
+                if (tile.getValue() == '.') {
+                    tile.setValue('p');
+                    actors.add(new Actor(id, tile));
                 } else {
                     System.out.println("not set at " + x + " " + y);
-                    addActor(actors);
+                    addActor(id);
                 }
             }
 
@@ -58,17 +91,6 @@ public class World {
     }
     //
 
-    public void addPlayer() {
-        grid.stream().findAny().ifPresent(s -> {
-            if (s.getValue() == '_') {
-                s.setValue((char) (r.nextInt(26) + 'a'));
-                System.out.println("set");
 
-            } else {
-                System.out.println("not set");
-                addPlayer();
-            }
-
-        });
-    }
 }
+
