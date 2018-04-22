@@ -19,9 +19,14 @@ public class Main {
         //print
 
         world.printGrid();
-        world.playRound(100);
+        int turn=0;
+
+        //world.playRound(100);
+        world.playTillEnd();
+
 
         System.out.println(world.getActors());
+        System.out.println(world.getNumberOfAlive());
         System.out.println("done");
 
     }

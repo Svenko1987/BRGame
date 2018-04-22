@@ -3,8 +3,8 @@ package com.company;
 public class Tile {
     private int xAxis;
     private int yAxis;
-    private char value;
-    private char emtyValue = '.';
+    private TileValue value;
+
 
 
     public void setTile(Tile tile) {
@@ -13,7 +13,7 @@ public class Tile {
         this.value = tile.getValue();
     }
 
-    public Tile(int xAxis, int yAxis, char value) {
+    public Tile(int xAxis, int yAxis, TileValue value) {
         this.xAxis = xAxis;
         this.yAxis = yAxis;
         this.value = value;
@@ -35,15 +35,12 @@ public class Tile {
         return yAxis;
     }
 
-    public char getValue() {
+    public TileValue getValue() {
         return value;
     }
 
-    public char getEmtyValue() {
-        return emtyValue;
-    }
 
-    public void setValue(char value) {
+    public void setValue(TileValue value) {
         this.value = value;
     }
 
@@ -56,3 +53,4 @@ public class Tile {
 
     }
 }
+

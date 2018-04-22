@@ -8,7 +8,7 @@ public enum Direction {
 
     private final int deltaX;
     private final int deltaY;
-    
+
     Direction(int x, int y ){
         deltaX=x;
         deltaY=y;

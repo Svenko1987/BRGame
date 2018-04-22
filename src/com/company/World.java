@@ -9,6 +9,8 @@ public class World {
     private final Set<Tile> grid = new LinkedHashSet<>();
     private final HashSet<Actor> actors = new HashSet<>();
     private Random r = new Random();
+    public int numberOfAlive;
+    private int turn = 0;
 
 
     public World(int height, int width) {
@@ -27,10 +29,18 @@ public class World {
     public void generateGrid() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                Tile temp = new Tile(i, j, '.');
+                Tile temp = new Tile(i, j, TileValue.EMPTY);
                 this.grid.add(temp);
             }
         }
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public void incrementTurn() {
+        this.turn++;
     }
 
     private void addTile(Tile tile) {
@@ -45,17 +55,44 @@ public class World {
         return actors;
     }
 
+    public int getNumberOfAlive() {
+        return numberOfAlive;
+    }
+
+    public void killPlayer() {
+        this.numberOfAlive--;
+    }
+
     public void playRound(int number) {
         for (int i = 0; i < number; i++) {
-            actors.forEach(actor -> actor.pickAction(this));
-            //printGrid();
+            actors.forEach(actor -> {
+                if (actor.isAlive()) actor.pickAction(this);
+
+            });
+
+            printGrid();
             System.out.println("round : " + i + "___________________________________________________________________________________________________________________________________");
         }
     }
 
+    public void playTillEnd() {
+
+        while (numberOfAlive > 1) {
+            actors.forEach(actor -> {
+                if (actor.isAlive()) actor.pickAction(this);
+                incrementTurn();
+            });
+        }
+
+        System.out.println("Turn is: " + getTurn());
+        printGrid();
+
+
+    }
+
     public void printGrid() {
         getGrid().forEach(t -> {
-            System.out.print(t.getValue());
+            System.out.print(t.getValue().getValue());
             if (t.getyAxis() == width - 1) System.out.print("\n");
         });
     }
@@ -64,6 +101,7 @@ public class World {
         for (int i = 0; i < number; i++) {
             addActor(i);
         }
+        this.numberOfAlive = number;
 
     }
 
@@ -76,9 +114,9 @@ public class World {
 
         grid.forEach(tile -> {
             if (tile.getxAxis() == x && tile.getyAxis() == y) {
-                if (tile.getValue() == '.') {
-                    tile.setValue('p');
-                    actors.add(new Actor(id, tile));
+                if (tile.getValue().equals(TileValue.EMPTY)) {
+                    tile.setValue(TileValue.PLAYER);
+                    actors.add(new Actor(id, tile, 1));
                 } else {
                     System.out.println("not set at " + x + " " + y);
                     addActor(id);
