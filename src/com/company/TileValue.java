@@ -6,8 +6,8 @@ public enum TileValue {
     POWERUP('u');
     private final char value;
 
-    TileValue(char v){
-        value=v;
+    TileValue(char v) {
+        value = v;
     }
 
     public char getValue() {

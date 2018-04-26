@@ -1,7 +1,7 @@
 package com.company;
 
 public enum Direction {
-    UP (-1, 0),
+    UP(-1, 0),
     DOWN(1, 0),
     LEFT(0, -1),
     RIGHT(0, 1);
@@ -9,9 +9,9 @@ public enum Direction {
     private final int deltaX;
     private final int deltaY;
 
-    Direction(int x, int y ){
-        deltaX=x;
-        deltaY=y;
+    Direction(int x, int y) {
+        deltaX = x;
+        deltaY = y;
     }
 
     public int getDeltaX() {

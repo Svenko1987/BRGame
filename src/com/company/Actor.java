@@ -1,5 +1,6 @@
 package com.company;
 
+import javafx.scene.control.TextArea;
 
 import java.util.Random;
 
@@ -18,11 +19,11 @@ public class Actor {
     public Actor() {
     }
 
-    public void setEnemy(Tile enemy) {
+    private void setEnemy(Tile enemy) {
         this.enemy = enemy;
     }
 
-    public Actor(int id, Tile curentLocation, int health) {
+    Actor(int id, Tile curentLocation, int health) {
         this.id = id;
         this.curentLocation = curentLocation;
         this.health = health;
@@ -36,9 +37,6 @@ public class Actor {
         return alive;
     }
 
-    public void removeActor(World world, Actor actor) {
-        world.getActors().remove(actor);
-    }
 
     public void setHealth(int health) {
         this.health = health;
