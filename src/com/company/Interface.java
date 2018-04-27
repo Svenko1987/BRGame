@@ -2,6 +2,7 @@ package com.company;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -17,9 +18,10 @@ import java.util.Timer;
 
 
 public class Interface extends Application {
-    Stage window;
-    Scene scene;
-
+    private Stage window;
+    private Scene scene;
+    static final int HEIGHT = 120;
+    static final int WIDTH = 80;
 
     public static void main(String[] args) {
         launch(args);
@@ -40,37 +42,36 @@ public class Interface extends Application {
         world.setCanvas(canvas);
         world.setGraphicsContext(graphicsContext);
 
-
         Label topLable = new Label("this is top");
+
+
         Button generate = new Button("Genarate");
         generate.setOnAction(event -> {
             world.generateGrid();
             world.setActors(100);
-            world.showOnCanvas(canvas, graphicsContext);
+            worldGraphics.showOnCanvas(world);
 
 
         });
-        Button playGame = new Button("Run-BROKEN");
-        playGame.setOnAction(event -> {
-            world.startThread(new Timer());
-        });
-        Button test = new Button("Play one turn");
+        Button playGame = new Button("Run");
+        playGame.setOnAction(event -> world.startThread(new Timer()));
+        Button test = new Button("Pause");
         test.setOnAction(event -> {
             world.playOne();
-            world.showOnCanvas(canvas, graphicsContext);
+            worldGraphics.showOnCanvas(world);
         });
 
         VBox topV = new VBox();
-        topV.getChildren().addAll(generate, test, playGame);
+        topV.getChildren().addAll(generate, playGame, test);
         BorderPane root = new BorderPane();
 
         root.setTop(topLable);
         root.setCenter(canvas);
         root.setBottom(new javafx.scene.control.Label("botton"));
-        root.setLeft(new javafx.scene.control.Label("Left"));
+        root.setLeft(actions);
         root.setRight(topV);
 
-        scene = new Scene(root, 800, 800);
+        scene = new Scene(root, 900, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 

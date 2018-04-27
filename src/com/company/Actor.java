@@ -1,6 +1,5 @@
 package com.company;
 
-import javafx.scene.control.TextArea;
 
 import java.util.Random;
 
@@ -10,7 +9,7 @@ public class Actor {
     private int id;
     private int health;
     private Tile curentLocation;
-    private Tile enemy;
+    private Actor enemy;
     private boolean alive = true;
 
     private Random r = new Random();
@@ -19,7 +18,7 @@ public class Actor {
     public Actor() {
     }
 
-    private void setEnemy(Tile enemy) {
+    private void setEnemy(Actor enemy) {
         this.enemy = enemy;
     }
 
@@ -97,8 +96,8 @@ public class Actor {
 
     private void move(World world, Direction direction) {
 
-        if (curentLocation.getxAxis() + direction.getDeltaX() >= 0 && curentLocation.getxAxis() + direction.getDeltaX() < world.getHeight()
-                && curentLocation.getyAxis() + direction.getDeltaY() >= 0 && curentLocation.getyAxis() + direction.getDeltaY() < world.getWidth()) {
+        if (curentLocation.getxAxis() + direction.getDeltaX() >= 1 && curentLocation.getxAxis() + direction.getDeltaX() < world.getHeight() - 10
+                && curentLocation.getyAxis() + direction.getDeltaY() >= 1 && curentLocation.getyAxis() + direction.getDeltaY() < world.getWidth() + 10) {
             world.getGrid().stream()
                     .filter(tile -> tile.getxAxis() == curentLocation.getxAxis() + direction.getDeltaX()
                             && tile.getyAxis() == curentLocation.getyAxis() + direction.getDeltaY())
@@ -117,36 +116,39 @@ public class Actor {
         } else actorMove(world);
     }
 
-    public void pickAction(World world) {
-        if (enemyLocatio(world) != null) battle(world);
+    void pickAction(World world, WorldGraphics worldGraphics) {
+        if (enemyLocatio(world) != null) battle(world, worldGraphics);
         else actorMove(world);
     }
 
-    public Tile enemyLocatio(World world) {
-        scoutForPlayer(world, Direction.UP);
+    private Actor enemyLocatio(World world) {
         scoutForPlayer(world, Direction.DOWN);
         scoutForPlayer(world, Direction.LEFT);
         scoutForPlayer(world, Direction.RIGHT);
+        scoutForPlayer(world, Direction.UP);
         return enemy;
     }
 
-    public void battle(World world) {
+    private void battle(World world, WorldGraphics worldGraphics) {
+
         world.getActors().stream()
-                .filter(actor -> actor.getCurentLocation().equals(enemy))
+                .filter(actor -> actor.getCurentLocation().equals(enemy.getCurentLocation()) && enemy.isAlive())
                 .findFirst()
                 .ifPresent(validActor -> {
+                            worldGraphics.combatText("COMBAT " + this + " WITH " + validActor);
                             System.out.println("COMBAT " + this + " WITH " + validActor);
                             validActor.setHealth((validActor.getHealth() - 1));
                             world.getGrid().stream()
                                     .filter(tile -> tile.equals(validActor.getCurentLocation()))
                                     .findFirst()
                                     .ifPresent(validTile -> {
-                                        this.setEnemy(null);
                                         validTile.setValue(TileValue.EMPTY);
                                         validActor.setAlive(false);
                                         validActor.setCurentLocation(new Tile(-1, -1, TileValue.PLAYER));
                                         world.killPlayer();
-                                        System.out.println("payer killed " + validActor);
+                                        this.enemy = null;
+                                        worldGraphics.combatText("player killed " + validActor);
+                                        System.out.println("player killed " + validActor);
                                     });
 
 
@@ -154,20 +156,18 @@ public class Actor {
                 );
     }
 
-    public void scoutForPlayer(World world, Direction direction) {
+    private void scoutForPlayer(World world, Direction direction) {
 
         world.getGrid().stream()
                 .filter(tile -> tile.getxAxis() == curentLocation.getxAxis() + direction.getDeltaX()
                         && tile.getyAxis() == curentLocation.getyAxis() + direction.getDeltaY()
                         && tile.getValue().equals(TileValue.PLAYER))
                 .findFirst()
-                .ifPresent(validTile -> {
-                    world.getActors().stream()
-                            .filter(actor -> actor.getCurentLocation().equals(validTile)
-                                    && actor.isAlive())
-                            .findFirst()
-                            .ifPresent(validActor -> setEnemy(validTile));
-                });
+                .ifPresent(validTile -> world.getActors().stream()
+                        .filter(actor -> actor.getCurentLocation().equals(validTile)
+                                && actor.isAlive())
+                        .findFirst()
+                        .ifPresent(validActor -> setEnemy(validActor)));
     }
 
     private void dontMove() {

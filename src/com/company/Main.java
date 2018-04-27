@@ -1,14 +1,11 @@
 package com.company;
 
-
-import javafx.scene.control.TextArea;
-
 public class Main {
 
     public static void main(String[] args) {
-        // write your code here
-        //TextArea ta = new TextArea();
-        //World world = new World(40, 150, ta);
+
+
+        //World world = new World(40, 150, );
 
 
         //world.generateGrid();
@@ -22,7 +19,7 @@ public class Main {
         //print
 
         // world.printGrid();
-        int turn = 0;
+        //int turn = 0;
 
         //world.playRound(100);
         //world.playTillEnd();

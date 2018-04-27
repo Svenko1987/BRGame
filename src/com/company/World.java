@@ -42,6 +42,7 @@ public class World {
         return height;
     }
 
+
     public int getWidth() {
         return width;
     }
@@ -85,7 +86,7 @@ public class World {
 
     public void playOne() {
         actors.forEach(actor -> {
-            if (actor.isAlive()) actor.pickAction(this);
+            if (actor.isAlive()) actor.pickAction(this, worldGraphics);
 
 
         });
@@ -111,7 +112,7 @@ public class World {
     public void playRound(int number) {
         for (int i = 0; i < number; i++) {
             actors.forEach(actor -> {
-                if (actor.isAlive()) actor.pickAction(this);
+                if (actor.isAlive()) actor.pickAction(this,worldGraphics);
 
             });
 
@@ -124,9 +125,9 @@ public class World {
 
         while (numberOfAlive > 1) {
             actors.forEach(actor -> {
-                if (actor.isAlive()) actor.pickAction(this);
+                if (actor.isAlive()) actor.pickAction(this, worldGraphics);
                 incrementTurn();
-                //printGridToTA(textArea);
+
             });
         }
 
@@ -153,7 +154,6 @@ public class World {
 
 
     }
-
 
     public void setActors(int number) {
         for (int i = 0; i < number; i++) {
