@@ -1,9 +1,12 @@
 package com.company;
 
+
+
 public class Tile {
     private int xAxis;
     private int yAxis;
     private TileValue value;
+    private boolean inStrorm=false;
 
 
 
@@ -13,7 +16,12 @@ public class Tile {
         this.value = value;
     }
 
+    public void setInStrorm(boolean inStrorm) {this.inStrorm = inStrorm;
+    }
 
+    public boolean getInStrorm() {
+        return inStrorm;
+    }
 
     int getxAxis() {
         return xAxis;

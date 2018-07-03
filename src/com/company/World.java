@@ -144,6 +144,12 @@ public class World {
         });
     }
 
+    public void makeStorm(){
+    Storm storm=new Storm();
+    storm.setStormCenter(this);
+    storm.createStorm(this);
+    }
+
     public void showOnCanvas(Canvas canvas, GraphicsContext graphicsContext) {
         graphicsContext.setFill(Color.BROWN);
         graphicsContext.fillRect(0, 0, canvas.getWidth(), canvas.getWidth());

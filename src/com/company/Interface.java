@@ -49,6 +49,7 @@ public class Interface extends Application {
         generate.setOnAction(event -> {
             world.generateGrid();
             world.setActors(100);
+            world.makeStorm();
             worldGraphics.showOnCanvas(world);
 
 
